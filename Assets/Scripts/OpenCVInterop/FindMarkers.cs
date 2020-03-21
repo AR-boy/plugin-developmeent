@@ -13,11 +13,17 @@ namespace OpenCVInterop
         public int[] markerIds;
         public List<List<Point2f>> markers;
         public List<List<Point2f>> rejectedCandidates;
-        public UDetectMarkersData(int[] markerIds_param,  List<List<Point2f>> markers_param, List<List<Point2f>> rejectedCandidates_param)
+        public IntPtr markerIdsPointer;
+        public IntPtr markersPointer;
+        public IntPtr rejectedCandidatesPointer;
+        public UDetectMarkersData(int[] markerIds_param,  List<List<Point2f>> markers_param, List<List<Point2f>> rejectedCandidates_param, IntPtr markerIdsPointer_params,  IntPtr markersPointer_params,  IntPtr rejectedCandidatesPointer_params)
         {
             markerIds = markerIds_param;
             markers = markers_param;
             rejectedCandidates = rejectedCandidates_param;
+            markerIdsPointer = markersPointer_params;
+            markersPointer = markersPointer_params;
+            rejectedCandidatesPointer = rejectedCandidatesPointer_params;
         }
     }
     public static partial class Aruco
@@ -60,14 +66,16 @@ namespace OpenCVInterop
                 DetectMarkers(texP, width, height, markerIds, markers, rejectedCandidates);
             }
             
-            DoubleVector2PointFMarshaller doubleVector2PointFMarshallerA =  new DoubleVector2PointFMarshaller();
-            DoubleVector2PointFMarshaller doubleVector2PointFMarshallerB =  new DoubleVector2PointFMarshaller();
+            DoubleVector2PointFMarshaller doubleVector2PointFMarshaller = new DoubleVector2PointFMarshaller();
             VectorIntMarshaller vectorIntMarshaller = new VectorIntMarshaller();
 
             UDetectMarkersData markerData = new UDetectMarkersData(
                 (int[]) vectorIntMarshaller.MarshalNativeToManaged(markerIds),
-                (List<List<Point2f>>) doubleVector2PointFMarshallerA.MarshalNativeToManaged(markers),
-                (List<List<Point2f>>) doubleVector2PointFMarshallerB.MarshalNativeToManaged(rejectedCandidates)
+                (List<List<Point2f>>) doubleVector2PointFMarshaller.MarshalNativeToManaged(markers),
+                (List<List<Point2f>>) doubleVector2PointFMarshaller.MarshalNativeToManaged(rejectedCandidates),
+                markerIds,
+                markers,
+                rejectedCandidates      
             );
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;

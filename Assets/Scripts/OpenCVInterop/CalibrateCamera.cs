@@ -12,10 +12,14 @@ namespace OpenCVInterop
     {
         public double[,] distortionCoefficients;
         public double[,] cameraMatrix;
-        public UCameraCalibrationData(double[,] distortionCoefficients_param, double[,] cameraMatrix_param)
+        public IntPtr distCoeffsPointer;
+        public IntPtr cameraMatrixPointer;
+        public UCameraCalibrationData(double[,] distortionCoefficients_param, double[,] cameraMatrix_param, IntPtr distCoeffsPointer_param, IntPtr cameraMatrixPointer_param)
         {
             distortionCoefficients = distortionCoefficients_param;
             cameraMatrix = cameraMatrix_param;
+            distCoeffsPointer = distCoeffsPointer_param;
+            cameraMatrixPointer = cameraMatrixPointer_param;
         }
     }
     public static partial class Aruco
@@ -120,7 +124,9 @@ namespace OpenCVInterop
 
             UCameraCalibrationData calibrationData = new UCameraCalibrationData(
                 (double[,]) matDoubleMarshaller.MarshalNativeToManaged(distCoeffs),
-                (double[,]) matDoubleMarshaller.MarshalNativeToManaged(cameraMatrix)
+                (double[,]) matDoubleMarshaller.MarshalNativeToManaged(cameraMatrix),
+                distCoeffs,
+                cameraMatrix
             );
 
             watch.Stop();

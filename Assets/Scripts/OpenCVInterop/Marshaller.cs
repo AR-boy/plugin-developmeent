@@ -164,6 +164,16 @@ namespace OpenCVInterop.MarshalOpenCV
             z = z_param;
         }
     }
+    public struct Point3d
+    {
+        public double x,y,z;
+        public Point3d(double x_param, double y_param, double z_param)
+        {
+            x = x_param;
+            y = y_param;
+            z = z_param;
+        }
+    }
 
 class MatIntMarshaller : ICustomMarshaler
     {
@@ -311,6 +321,59 @@ class MatDoubleMarshaller : ICustomMarshaler
                 Marshal.Copy(nativeInternalDataPointer, intList, 0, numOInts);
             }
             return intList;
+        }
+    }
+
+    class VectorVec3dFMarshaller : ICustomMarshaler
+    {
+        static private ICustomMarshaler marshaler = new VectorVec3dFMarshaller();
+
+        public static ICustomMarshaler GetInstance(string cookie) 
+        {
+            return marshaler;
+        }
+        public void CleanUpManagedData(object ManagedObj)
+        {
+            // Nothing to do
+        }
+        public void CleanUpNativeData(IntPtr nativeDataPointer)
+        {
+            // delete pointer to free memory on native sides
+            OpenCVMarshal.DeleteVectorVec3dPointer(nativeDataPointer);
+            nativeDataPointer = IntPtr.Zero;
+        }
+        public int GetManagedDataSize(List<Point3d> managedObject)
+        {
+            return Marshal.SizeOf(typeof(Point3d)) * managedObject.Count;
+        }
+        public int GetNativeDataSize()
+        {
+            return IntPtr.Size;
+        }
+        public IntPtr MarshalManagedToNative(object managedObject)
+        {
+            return IntPtr.Zero;
+            // no current implementation  
+        }
+        public object MarshalNativeToManaged(IntPtr nativeDataPointer)
+        {
+            List<Point3d> Point3dList = new List<Point3d>();
+            int numOfVec3d = OpenCVMarshal.GetVectorVec3dPointerSize(nativeDataPointer);
+            if(numOfVec3d > 0)
+            {
+                IntPtr nativeInternalDataPointer = OpenCVMarshal.GetVectorVec3dPointerData(nativeDataPointer);
+                double[] coordStream = new double[numOfVec3d * 3];
+
+                // iterate over bytes in contigous memory to copy in double values from native stream to managed array
+                Marshal.Copy(nativeInternalDataPointer, coordStream, 0, numOfVec3d * 3);
+
+                // create primitive-made structs from floatr array
+                for(int i = 0; i < coordStream.Length ; i=i+3)
+                {
+                    Point3dList.Add(new Point3d(coordStream[i], coordStream[i+1], coordStream[i+2]));
+                }
+            }
+            return Point3dList;
         }
     }
 
