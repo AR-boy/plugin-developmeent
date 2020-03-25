@@ -28,9 +28,9 @@ public class DisplayPlaneAutosizer : MonoBehaviour
         deviceCamera = gameObject.GetComponent<InitWebCamera>().GetCamera();
 
         // position middle of the plane to be located at x0y0z0
-        gameObject.transform.position = new Vector3(0, (gameObject.transform.lossyScale.z * 10) / 2, -(gameObject.transform.lossyScale.x * 10) / 2);
+        gameObject.transform.position = new Vector3(-(gameObject.transform.lossyScale.x) / 2, -(gameObject.transform.lossyScale.y) / 2 , 0);
         // position the camera to point to the middle of the plane
-        displayCamera.transform.position = new Vector3(displayCamera.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z);
+        displayCamera.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, 500);
 
         // float cameraPos = (displayCamera.nearClipPlane + 0.01f);
 

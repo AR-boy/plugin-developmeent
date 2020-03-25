@@ -43,6 +43,21 @@ namespace OpenCVInterop
                 IntPtr distortionCoefficients
             );
             [DllImport("OpenCVUnity")]
+            public static extern void StaticCameraCalibDataSomething(
+                IntPtr cameraMatrix,
+                IntPtr distortionCoefficients
+            );
+            [DllImport("OpenCVUnity")]
+            public static extern void RotationVectorToEulerAngles(
+                IntPtr rvecs,
+                IntPtr eulerAngles
+            );
+            [DllImport("OpenCVUnity")]
+            public static extern void RotationVectorsToEulerAngles(
+                IntPtr rvecs,
+                IntPtr eulerAngles
+            );
+            [DllImport("OpenCVUnity")]
             public unsafe static extern IntPtr CreateBooleanPointer();
             [DllImport("OpenCVUnity")]
             public static extern void DeleteBooleanPointer(IntPtr pointer);
@@ -51,6 +66,7 @@ namespace OpenCVInterop
         #elif UNITY_ANDROID
            
         #endif
+
 
         unsafe public static bool UFindChessboardCorners(Color32[] texture, int width, int height, IntPtr imagePoints, IntPtr objectPoints)
         {
@@ -96,6 +112,55 @@ namespace OpenCVInterop
 
             return foundBoard;
         } 
+        public static UCameraCalibrationData UStaticCalibrateCameraData() 
+        {   
+
+            IntPtr distCoeffs = OpenCVMarshal.CreateMatPointer();
+            IntPtr cameraMatrix = OpenCVMarshal.CreateMatPointer();
+
+            StaticCameraCalibDataSomething(
+                cameraMatrix,
+                distCoeffs
+            );
+
+            MatDoubleMarshaller matDoubleMarshaller = new MatDoubleMarshaller();
+
+            UCameraCalibrationData calibrationData = new UCameraCalibrationData(
+                (double[,]) matDoubleMarshaller.MarshalNativeToManaged(distCoeffs),
+                (double[,]) matDoubleMarshaller.MarshalNativeToManaged(cameraMatrix),
+                distCoeffs,
+                cameraMatrix
+            );
+            
+            return calibrationData;
+        }
+        public static double[,] UGetEulerAngles(IntPtr rvec)
+        {
+            IntPtr eulerAnglesPointer = OpenCVMarshal.CreateMatPointer();
+            RotationVectorToEulerAngles(
+                rvec,
+                eulerAnglesPointer
+            );
+
+            MatDoubleMarshaller matDoubleMarshaller = new MatDoubleMarshaller();
+            double[,] eulerAngles = (double[,]) matDoubleMarshaller.MarshalNativeToManaged(eulerAnglesPointer);
+
+            return eulerAngles;
+        }
+        // rename needed
+        public static double[,] UGetEulerAnglesMultiple(IntPtr rvecs)
+        {
+            IntPtr eulerAnglesPointer = OpenCVMarshal.CreateMatPointer();
+            RotationVectorsToEulerAngles(
+                rvecs,
+                eulerAnglesPointer
+            );
+
+            MatDoubleMarshaller matDoubleMarshaller = new MatDoubleMarshaller();
+            double[,] eulerAngles = (double[,]) matDoubleMarshaller.MarshalNativeToManaged(eulerAnglesPointer);
+
+            return eulerAngles;
+        }
         unsafe public static UCameraCalibrationData UCalibrateCamera(Color32[] texture, int width, int height, IntPtr imagePoints, IntPtr objectPoints) 
         {   
 

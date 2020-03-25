@@ -32,6 +32,12 @@ namespace OpenCVInterop.MarshalOpenCV
             [DllImport("OpenCVUnity")]
             public static extern int GetMatPointerDimNum(IntPtr pointer);
 
+            // Vec3d:
+            [DllImport("OpenCVUnity")]
+            public unsafe static extern IntPtr CreateVec3dPointer();
+            [DllImport("OpenCVUnity")]
+            public static extern void DeleteVec3dPointer(IntPtr pointer);
+
             // VectorInt:
             [DllImport("OpenCVUnity")]
             public unsafe static extern IntPtr CreateVectorIntPointer();
@@ -192,7 +198,6 @@ class MatIntMarshaller : ICustomMarshaler
             // delete pointer to free memory on native sides
             OpenCVMarshal.DeleteMatPointer(nativeDataPointer);
             nativeDataPointer = IntPtr.Zero;
-;
         }
         public int GetManagedDataSize(int[] managedObject)
         {
@@ -214,16 +219,19 @@ class MatIntMarshaller : ICustomMarshaler
             int numOfDim = OpenCVMarshal.GetMatPointerDimNum(nativeDataPointer);
 
 
+            int numOfMarker = OpenCVMarshal.GetVectorIntSize(nativeDataPointer);
 
             int[,] intArray = new int[numOfRows, numOfCols];
 
             for(int i = 0; i < numOfRows; i++)
             {
-                    for(int j = 0; j < numOfCols; j++)
+                for(int j = 0; j < numOfCols; j++)
                 {
                     intArray[i,j] = OpenCVMarshal.GetMatPointerOfIntDataAt(nativeDataPointer, i, j);
                 }
             }
+
+            numOfMarker = OpenCVMarshal.GetVectorIntSize(nativeDataPointer);
             
             return intArray;
         }
@@ -267,11 +275,13 @@ class MatDoubleMarshaller : ICustomMarshaler
             int numOfDim = OpenCVMarshal.GetMatPointerDimNum(nativeDataPointer);
 
             double[,] doubleArray = new double[numOfRows, numOfCols];
+            Debug.Log(" size: "+doubleArray.Length);
 
             for(int i = 0; i < numOfRows; i++)
             {
                 for(int j = 0; j < numOfCols; j++)
                 {
+                    Debug.Log(" at - [" + i + "] ["+j+"]"+ OpenCVMarshal.GetMatPointerOfDoubleDataAt(nativeDataPointer, i, j));
                     doubleArray[i,j] = OpenCVMarshal.GetMatPointerOfDoubleDataAt(nativeDataPointer, i, j);
                 }
             }
@@ -279,6 +289,50 @@ class MatDoubleMarshaller : ICustomMarshaler
             return doubleArray;
         }
     }
+
+class Vec3dMarshaller : ICustomMarshaler
+{
+    static private ICustomMarshaler marshaler = new Vec3dMarshaller();
+
+    public static ICustomMarshaler GetInstance(string cookie) 
+    {
+        return marshaler;
+    }
+    public void CleanUpManagedData(object ManagedObj)
+    {
+        // Nothing to do
+    }
+    public void CleanUpNativeData(IntPtr nativeDataPointer)
+    {
+        // delete pointer to free memory on native sides
+        OpenCVMarshal.DeleteVec3dPointer(nativeDataPointer);
+        nativeDataPointer = IntPtr.Zero;
+    }
+    public int GetManagedDataSize(List<Point3d> managedObject)
+    {
+        return Marshal.SizeOf(typeof(Point3d)) * managedObject.Count;
+    }
+    public int GetNativeDataSize()
+    {
+        return IntPtr.Size;
+    }
+    public IntPtr MarshalManagedToNative(object managedObject)
+    {
+        return IntPtr.Zero;
+        // no current implementation  
+    }
+    public object MarshalNativeToManaged(IntPtr nativeDataPointer)
+    {
+        Point3d Point3d;
+        double[] coordStream = new double[3];
+
+        // iterate over bytes in contigous memory to copy in double values from native stream to managed array
+        Marshal.Copy(nativeDataPointer, coordStream, 0, coordStream.Length);
+
+        Point3d = new Point3d(coordStream[0], coordStream[1], coordStream[2]);
+        return Point3d;
+    }
+}
  class VectorIntMarshaller : ICustomMarshaler
     {
         static private ICustomMarshaler marshaler = new VectorIntMarshaller();
@@ -320,6 +374,7 @@ class MatDoubleMarshaller : ICustomMarshaler
                 // iterate over bytes in contigous memory to copy in ints into the array from native stream
                 Marshal.Copy(nativeInternalDataPointer, intList, 0, numOInts);
             }
+            numOInts = OpenCVMarshal.GetVectorIntSize(nativeDataPointer);
             return intList;
         }
     }

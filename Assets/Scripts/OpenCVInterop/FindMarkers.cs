@@ -21,7 +21,7 @@ namespace OpenCVInterop
             markerIds = markerIds_param;
             markers = markers_param;
             rejectedCandidates = rejectedCandidates_param;
-            markerIdsPointer = markersPointer_params;
+            markerIdsPointer = markerIdsPointer_params;
             markersPointer = markersPointer_params;
             rejectedCandidatesPointer = rejectedCandidatesPointer_params;
         }
@@ -77,6 +77,10 @@ namespace OpenCVInterop
                 markers,
                 rejectedCandidates      
             );
+
+            IntPtr intList = markerData.markerIdsPointer;
+            int listOfIds =  OpenCVMarshal.GetVectorIntSize(intList);
+            int listOfMarkers = OpenCVMarshal.GetDoubleVector2PointFPointerSize(markerData.markersPointer);
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
             Debug.Log("DetectMarkers took: " + elapsedMs + " Ms");
