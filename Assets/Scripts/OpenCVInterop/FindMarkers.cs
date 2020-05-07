@@ -46,9 +46,11 @@ namespace OpenCVInterop
             );
         #elif UNITY_ANDROID
             [DllImport("OpenCVUnity")]
-            [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(DoubleVector2PointFMarshaller))]
             public unsafe static extern void DetectMarkers(
-                Color32* textureData, int width, int height
+                Color32* textureData, int width, int height,
+                IntPtr markerIds,  
+                IntPtr markerCorners,
+                IntPtr rejectedCandidates
             );
         #endif
 
@@ -83,7 +85,6 @@ namespace OpenCVInterop
             int listOfMarkers = OpenCVMarshal.GetDoubleVector2PointFPointerSize(markerData.markersPointer);
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
-            Debug.Log("DetectMarkers took: " + elapsedMs + " Ms");
             
             return markerData;
         }

@@ -36,6 +36,22 @@ namespace OpenCVInterop
             tvecPointer = tvecPointer_param;
         }
     }
+
+    public struct UBoardMarkerPoseEstimationDataEuler
+    {
+        public Point3d rvec;
+        public Point3d tvec;
+        public double[][] eulerAngles;
+
+        public UBoardMarkerPoseEstimationDataEuler(Point3d rvec_param, Point3d tvec_param, double[][] eulerAngles)
+        {
+            rvec = rvec_param;
+            tvec = tvec_param;
+            this.eulerAngles = eulerAngles;
+        }
+    }
+
+
     public static partial class Aruco
     {
         #if UNITY_EDITOR_WIN
@@ -61,10 +77,61 @@ namespace OpenCVInterop
                 IntPtr rvec,
                 IntPtr tvec
             );
+            [DllImport("OpenCVUnity")]
+            public unsafe static extern void EstimateCharucoBoardPose(
+                Color32* textureData,
+                int width,
+                int height,
+                float markerLength,
+                float squareLength,
+                int markersX,
+                int markersY,
+                IntPtr cameraMatrix,
+                IntPtr distCoeffs,
+                IntPtr rvec,
+                IntPtr tvec,
+                IntPtr eulerAngles
+            );
+            [DllImport("OpenCVUnity")]
+            public unsafe static extern void EstimateArucoBoardPoseV2(
+                Color32* textureData,
+                int width,
+                int height,
+                float markerLength,
+                float markerSeparation,
+                int markersX,
+                int markersY,
+                IntPtr cameraMatrix,
+                IntPtr distCoeffs,
+                IntPtr rvec,
+                IntPtr tvec,
+                IntPtr eulerAngles
+            );
         #elif UNITY_STANDALONE_WIN
            
         #elif UNITY_ANDROID
-           
+            [DllImport("OpenCVUnity")]
+            public unsafe static extern void EstimateSingleMarkerPose(
+                float markerLength,
+                IntPtr markerCorners,
+                IntPtr cameraMatrix,
+                IntPtr distCoeffs,
+                IntPtr rvecs,
+                IntPtr tvecs
+            );
+            [DllImport("OpenCVUnity")]
+            public unsafe static extern void EstimateArucoBoardPose(
+                float markerLength,
+                float markerSeparation,
+                int markersX,
+                int markersY,
+                IntPtr markerCorners,
+                IntPtr markerIds,
+                IntPtr cameraMatrix,
+                IntPtr distCoeffs,
+                IntPtr rvec,
+                IntPtr tvec
+            );
         #endif
 
         public static USingleMarkerPoseEstimationData UEstimateSingleMarkerPose(IntPtr markerCorners, IntPtr cameraMatrix, IntPtr distCoeffs)
@@ -88,17 +155,69 @@ namespace OpenCVInterop
             return PoseEstimateData;
         }
 
+        public unsafe static UBoardMarkerPoseEstimationDataEuler UEstimateArucoBoardPose(Color32[] texture, IntPtr cameraMatrix, IntPtr distCoeffs)
+        {
+            float markerLength = 0.04f;
+            float markerSeparation = 0.01f;
+            int staticWidth = 1920;
+            int staticHeight = 1080;
+            int markersX = 4;
+            int markersY = 3;
+            // int markersY = 9;
+            // int markersX = 6;
+            // float markerSeparation = 0.053f;
+            // float markerLength = 0.0125f;
+
+            Vec3dMarshaller tvecMarshaller = new Vec3dMarshaller();
+            Vec3dMarshaller rvecMarshaller = new Vec3dMarshaller();
+            MatDMarshaller eulerAngles = new MatDMarshaller();
+
+            
+            fixed (Color32* texP = texture)
+            {
+                EstimateArucoBoardPoseV2(
+                    texP,
+                    staticWidth,
+                    staticHeight,
+                    markerLength,
+                    markerSeparation,
+                    markersX,
+                    markersY,
+                    cameraMatrix,
+                    distCoeffs,
+                    rvecMarshaller.NativeDataPointer,
+                    tvecMarshaller.NativeDataPointer,
+                    eulerAngles.NativeDataPointer
+                );
+            }
+
+            rvecMarshaller.MarshalNativeToManaged();
+            tvecMarshaller.MarshalNativeToManaged();
+            eulerAngles.MarshalNativeToManaged();
+
+            UBoardMarkerPoseEstimationDataEuler PoseEstimateData = new UBoardMarkerPoseEstimationDataEuler(
+                (Point3d) rvecMarshaller.GetMangedObject(),
+                (Point3d) tvecMarshaller.GetMangedObject(),
+                (double[][]) eulerAngles.GetMangedObject()
+            );
+
+            return PoseEstimateData;
+        }
+
+
         public static UBoardMarkerPoseEstimationData UEstimateBoardMarkerPose(IntPtr markerCorners, IntPtr markerIds, IntPtr cameraMatrix, IntPtr distCoeffs)
         {
             float markerLength = 0.04f;
             float markerSeparation = 0.01f;
-            int markersX = 5;
-            int markersY = 7;
+            int markersX = 4;
+            int markersY = 3;
+            // int markersY = 9;
+            // int markersX = 6;
+            // float markerSeparation = 0.053f;
+            // float markerLength = 0.0125f;
 
-            IntPtr rvec = OpenCVMarshal.CreateVec3dPointer();
-            IntPtr tvec = OpenCVMarshal.CreateVec3dPointer();
-            int numOfMarker = OpenCVMarshal.GetVectorIntSize(markerIds);
-
+            Vec3dMarshaller tvecMarshaller = new Vec3dMarshaller();
+            Vec3dMarshaller rvecMarshaller = new Vec3dMarshaller();
 
             EstimateArucoBoardPose(
                 markerLength,
@@ -109,20 +228,62 @@ namespace OpenCVInterop
                 markerIds,
                 cameraMatrix,
                 distCoeffs,
-                rvec,
-                tvec
+                rvecMarshaller.NativeDataPointer,
+                tvecMarshaller.NativeDataPointer
             );
 
-            Vec3dMarshaller Vec3dMarshaller = new Vec3dMarshaller();
+            rvecMarshaller.MarshalNativeToManaged();
+            tvecMarshaller.MarshalNativeToManaged();
 
             UBoardMarkerPoseEstimationData PoseEstimateData = new UBoardMarkerPoseEstimationData(
-                (Point3d) Vec3dMarshaller.MarshalNativeToManaged(rvec),
-                (Point3d) Vec3dMarshaller.MarshalNativeToManaged(tvec),
-                rvec,
-                tvec
+                (Point3d) rvecMarshaller.GetMangedObject(),
+                (Point3d) tvecMarshaller.GetMangedObject(),
+                rvecMarshaller.NativeDataPointer,
+                tvecMarshaller.NativeDataPointer
             );
 
             return PoseEstimateData;
         }
+
+        public unsafe static UBoardMarkerPoseEstimationDataEuler UEstimateCharucoBoardPose(Color32[] texture, IntPtr cameraMatrix, IntPtr distCoeffs)
+        {
+            int width = 1920;
+            int height = 1080;
+            int cornersH = 3;
+            int cornersW = 4;
+            float markerLength = 0.045f;
+            float squareLength = 0.06f;
+
+            Vec3dMarshaller tvecMarshaller = new Vec3dMarshaller();
+            Vec3dMarshaller rvecMarshaller = new Vec3dMarshaller();
+            MatDMarshaller eulerAngles = new MatDMarshaller();
+
+            fixed (Color32* texP = texture)
+            {
+                EstimateCharucoBoardPose(
+                    texP,
+                    width,
+                    height,
+                    markerLength,
+                    squareLength,
+                    cornersW,
+                    cornersH,
+                    cameraMatrix,
+                    distCoeffs,
+                    rvecMarshaller.NativeDataPointer,
+                    tvecMarshaller.NativeDataPointer,
+                    eulerAngles.NativeDataPointer
+                );
+            }
+            
+            UBoardMarkerPoseEstimationDataEuler PoseEstimateData = new UBoardMarkerPoseEstimationDataEuler(
+                (Point3d) rvecMarshaller.GetMangedObject(),
+                (Point3d) tvecMarshaller.GetMangedObject(),
+                (double[][]) eulerAngles.GetMangedObject()
+            );
+
+            return PoseEstimateData;
+        }
+
     }
 }
