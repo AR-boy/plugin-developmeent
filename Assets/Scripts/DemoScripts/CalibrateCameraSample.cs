@@ -64,7 +64,7 @@ public class CalibrateCameraSample : MonoBehaviour
                     numOfSuccessfulFrames++;
                 }
 
-                if(numOfSuccessfulFrames >= 10)
+                if(numOfSuccessfulFrames >= numOfFrames)
                 {
                     calibData = Aruco.UCalibrateCameraCharuco(_webCamTexture.width, _webCamTexture.height, boardParameters, allCharucoIds, allCharucoCorners);
 
@@ -90,7 +90,7 @@ public class CalibrateCameraSample : MonoBehaviour
                         numOfSuccessfulFrames++;
                     }
 
-                    if(numOfSuccessfulFrames >= 40)
+                    if(numOfSuccessfulFrames >= numOfFrames)
                     {
                         calibData = Aruco.UCalibrateCameraCharuco(_webCamTexture.width, _webCamTexture.height, boardParameters, allCharucoIds, allCharucoCorners);
 

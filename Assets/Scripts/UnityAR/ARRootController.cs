@@ -119,7 +119,6 @@ public class ARRootController : MonoBehaviour
 
             if(ARRootCollider.bounds.min.z <= 0)
             {
-                Debug.Log("Colliding with plane");
                 float z_transform_val = Mathf.Abs(ARRootCollider.bounds.min.z)+ 50 ;
                 gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, z_transform_val);
                 ARCamera.PositionCameraZ(z_transform_val);

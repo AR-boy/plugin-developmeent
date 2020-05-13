@@ -35,65 +35,13 @@ public class EstimatePoseSample : MonoBehaviour
         double[][] eulerAngles = framePose.eulerAngles;
         Vec3d tvec = framePose.tvec;
 
-        int rowLength = eulerAngles.Length;
-
-        double[][] eulerAnglesList = new double[rowLength][];
-
-        for (int i = 0; i < rowLength; i++)
-        {
-            int colLength = eulerAngles[0].Length;
-            
-            eulerAnglesList[i] = new double[colLength];
-            for (int j = 0; j < colLength; j++)
-            {
-                eulerAnglesList[i][j] = Mathf.Rad2Deg * eulerAngles[i][j];
-            }
-        }
-
-        float sum_x = 0;
-        float sum_y = 0;
-        int num_of_int = 0;
-
-        for(int i = 0; i < frameMarkers.markers.Count; i++)
-        {
-            for(int j = 0; j < frameMarkers.markers[i].Count; j++)
-            {
-                sum_x += frameMarkers.markers[i][j].x;
-                sum_y += frameMarkers.markers[i][j].y;
-                num_of_int++;
-            }
-        }
-
-        float scale = 1; 
-        if(frameMarkers.markerIds.Length > 0)
-        {
-            scale =  (float) tvec.z / 0.56f;
-        }
+        float scale = Utilities.CalculateScale(tvec, boardParameters.markerLength, originalScale);
 
         if(frameMarkers.markerIds.Length > 2)
         {
-            _ARRootTransform.position = new Vector3(-(sum_x / num_of_int), -(sum_y / num_of_int),  _ARRootTransform.position.z);
-
-            if(
-                eulerAnglesList[0][0] != 0 ||
-                eulerAnglesList[0][1] != 0 ||
-                eulerAnglesList[0][2] != 0
-            )
-            {
-                _ARRootTransform.rotation = Quaternion.Euler(
-                    new Vector3(
-                        (float) eulerAnglesList[0][0], 
-                        (float) eulerAnglesList[0][2], 
-                        -(float) eulerAnglesList[0][1]
-                    )
-                );
-            }
-            
-            if(!float.IsInfinity(scale) && scale !=0)
-            {
-                _ARRootTransform.localScale = new Vector3(originalScale / scale, originalScale / scale, originalScale / scale);
-            }
-                
+            _ARRootTransform.position = Utilities.CalculateBoardAveragePosition(_ARRootTransform.position, frameMarkers.markers);
+            _ARRootTransform.rotation = Utilities.CalculateEulerAngleRotation(eulerAngles, _ARRootTransform.rotation);
+            _ARRootTransform.localScale = new Vector3(scale, scale, scale);
         }
 
     }

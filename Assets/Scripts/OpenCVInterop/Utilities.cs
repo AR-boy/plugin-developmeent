@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using OpenCVInterop;
+using OpenCVInterop.Marshallers;
 
 
 namespace OpenCVInterop.Utilities
@@ -84,6 +85,61 @@ namespace OpenCVInterop.Utilities
                 }
             }
             return calibData;
+        }
+
+        public static float CalculateScale(Vec3d tvec, float markerLength, float originalScale)
+        {
+            float scale = originalScale;
+            if(tvec.z !=0)
+            {
+                scale = (float) tvec.z / (markerLength * 10);
+                scale = originalScale / scale;
+            }
+            return scale;
+        }
+        public static Quaternion CalculateEulerAngleRotation(double[][] eulerAngles, Quaternion originalRotation)
+        {
+        
+            Quaternion newRotation = originalRotation;
+            if( eulerAngles[0][0] != 0 ||
+                eulerAngles[0][1] != 0 ||
+                eulerAngles[0][2] != 0  )
+            {
+                Vec3d EulerAnglesDeg = new Vec3d(
+                    Mathf.Rad2Deg * eulerAngles[0][0],
+                    Mathf.Rad2Deg * eulerAngles[0][1],
+                    Mathf.Rad2Deg * eulerAngles[0][2]
+                );
+                
+                newRotation =  Quaternion.Euler(
+                    new Vector3(
+                        (float) EulerAnglesDeg.x, 
+                        (float) EulerAnglesDeg.z, 
+                        -(float) EulerAnglesDeg.y
+                    )
+                );
+            }
+
+            return newRotation;
+        }
+
+        public static Vector3 CalculateBoardAveragePosition(Vector3 currentPosition, List<List<Vector2>> markers)
+        {
+            float sum_x = 0;
+            float sum_y = 0;
+            int num_of_corners = 0;
+
+            for(int i = 0; i < markers.Count; i++)
+            {
+                for(int j = 0; j < markers[i].Count; j++)
+                {
+                    sum_x += markers[i][j].x;
+                    sum_y += markers[i][j].y;
+                    num_of_corners++;
+                }
+            }
+
+            return new Vector3(-sum_x / num_of_corners, -sum_y / num_of_corners, currentPosition.z);
         }
 
     }

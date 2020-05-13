@@ -62,7 +62,6 @@ public class ARQuadSample : MonoBehaviour
         float avg_x = sum_x /(k);
         float avg_y = sum_y /(k);
         Vector2 avg_vector = new Vector2(-avg_x, -avg_y);
-        // Debug.Log("avg_vector: "+ avg_vector);
         QuadVertices quadVertices = new QuadVertices(avg_vector, avg_vector, avg_vector, avg_vector);
 
 
@@ -87,7 +86,6 @@ public class ARQuadSample : MonoBehaviour
                 {
                     quadVertices.topLeft = -markers[i][j];
                 }
-                Debug.Log("quadVertices: "+  quadVertices.bottomLeft+ quadVertices.bottomRight+  quadVertices.topRight+ quadVertices.topLeft);
             }
         }
         return quadVertices;
