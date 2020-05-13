@@ -20,6 +20,34 @@ namespace OpenCVInterop.Utilities
             cameraMatrix = cameraMatrixParam;
         }
     }
+    public struct CharucoBoardParameters {
+        public int squaresH;
+        public int squaresW;
+        public float squareLength;
+        public float markerLength;
+        public CharucoBoardParameters(int squaresH, int squaresW, float squareLength, float markerLength)
+        {
+            this.squaresH = squaresH;
+            this.squaresW = squaresW;
+            this.squareLength = squareLength;
+            this.markerLength = markerLength;
+        }
+    }
+
+    public struct ArucoBoardParameters {
+        public int squaresH;
+        public int squaresW;
+        public float markerLength;
+        public float markerSeperation;
+        public ArucoBoardParameters(int squaresH, int squaresW, float markerLength, float markerSeperation)
+        {
+            this.squaresH = squaresH;
+            this.squaresW = squaresW;
+            this.markerLength = markerLength;
+            this.markerSeperation = markerSeperation;
+        }
+    }
+    
 
     public static class Utilities
     {
@@ -36,14 +64,14 @@ namespace OpenCVInterop.Utilities
                 serialiser.Serialize(stream, cameraCalibData);
                 stream.Position = 0;
                 xmlDoc.Load(stream);
-                xmlDoc.Save(CAMERA_CALIBRATION_FILE);
+                xmlDoc.Save(Path.Combine(Application.persistentDataPath, CAMERA_CALIBRATION_FILE));
             }
             CameraCalibSerializable calibData =  LoadCameraCalibrationParams();
             string shit = "shit";
         }
         public static CameraCalibSerializable LoadCameraCalibrationParams() {
             XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load(CAMERA_CALIBRATION_FILE);
+            xmlDoc.Load(Path.Combine(Application.persistentDataPath, CAMERA_CALIBRATION_FILE));
             string xmlString = xmlDoc.OuterXml;
 
             CameraCalibSerializable calibData;

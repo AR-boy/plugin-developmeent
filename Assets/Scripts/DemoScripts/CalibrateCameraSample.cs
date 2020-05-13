@@ -4,16 +4,15 @@ using UnityEngine;
 using System;
 
 using OpenCVInterop;
-using OpenCVInterop.MarshalOpenCV;
+using OpenCVInterop.Marshallers;
 using OpenCVInterop.Utilities;
 
 public class CalibrateCameraSample : MonoBehaviour
 {
-    private DisplayPlaneAutosizer _scaler;
     private WebCamTexture _webCamTexture;
     private Transform maincam;
-    private List<List<Point2f>> _markerList;
-    private IntPtr allCharucoCorners;
+    private List<List<Vector2>> _markerList;
+    private DoubleVectorPoint2FMarshaller allCharucoCorners;
     private DoubleVectorIntMarshaller allCharucoIds;
     private UCameraCalibrationData calibData;
     private USingleMarkerPoseEstimationData poseEstimationData;
@@ -24,8 +23,14 @@ public class CalibrateCameraSample : MonoBehaviour
     private float numOfFrames;
     private bool runningOnAndroid;
 
+    private static CharucoBoardParameters boardParameters = new CharucoBoardParameters(
+        3, //squaresH 
+        4, //squaresW
+        0.06f, //squareLength
+        0.045f //markersLength
+    );
 
-    private float scale = 0;
+
     void Start()
     {
         // setup for android platforms
@@ -40,10 +45,9 @@ public class CalibrateCameraSample : MonoBehaviour
         #endif
 
         _webCamTexture = GetComponentInParent<InitWebCamera>().GetCamera();
-        _scaler = GetComponentInParent<DisplayPlaneAutosizer>();
 
         allCharucoIds = new DoubleVectorIntMarshaller();
-        allCharucoCorners = OpenCVMarshal.CreateDoubleVector2PointFPointer();
+        allCharucoCorners = new DoubleVectorPoint2FMarshaller();
         numOfSuccessfulFrames = 0;
     }
 
@@ -53,16 +57,16 @@ public class CalibrateCameraSample : MonoBehaviour
         {
             if(notCalibrated && Input.GetKeyDown(KeyCode.Space))
             {
-                bool sucess = Aruco.UFindCharucoBoardCorners(_webCamTexture.GetPixels32(), _webCamTexture.width, _webCamTexture.height,  allCharucoIds, allCharucoCorners);
+                bool sucess = Aruco.UFindCharucoBoardCorners(_webCamTexture.GetPixels32(), _webCamTexture.width, _webCamTexture.height, boardParameters, allCharucoIds, allCharucoCorners);
 
                 if(sucess)
                 {
                     numOfSuccessfulFrames++;
                 }
 
-                if(numOfSuccessfulFrames >= 20)
+                if(numOfSuccessfulFrames >= 10)
                 {
-                    calibData = Aruco.UCalibrateCameraCharuco(_webCamTexture.width, _webCamTexture.height,  allCharucoIds, allCharucoCorners);
+                    calibData = Aruco.UCalibrateCameraCharuco(_webCamTexture.width, _webCamTexture.height, boardParameters, allCharucoIds, allCharucoCorners);
 
                     CameraCalibSerializable calidSaveData;
                     calidSaveData.distortionCoefficients = (double[][]) calibData.distCoeffs.GetMangedObject();
@@ -79,7 +83,7 @@ public class CalibrateCameraSample : MonoBehaviour
             {
                 if (Input.touchCount > 0)
                 {
-                    bool sucess = Aruco.UFindCharucoBoardCorners(_webCamTexture.GetPixels32(), _webCamTexture.width, _webCamTexture.height,  allCharucoIds, allCharucoCorners);
+                    bool sucess = Aruco.UFindCharucoBoardCorners(_webCamTexture.GetPixels32(), _webCamTexture.width, _webCamTexture.height, boardParameters, allCharucoIds, allCharucoCorners);
 
                     if(sucess)
                     {
@@ -88,7 +92,7 @@ public class CalibrateCameraSample : MonoBehaviour
 
                     if(numOfSuccessfulFrames >= 40)
                     {
-                        calibData = Aruco.UCalibrateCameraCharuco(_webCamTexture.width, _webCamTexture.height,  allCharucoIds, allCharucoCorners);
+                        calibData = Aruco.UCalibrateCameraCharuco(_webCamTexture.width, _webCamTexture.height, boardParameters, allCharucoIds, allCharucoCorners);
 
                         CameraCalibSerializable calidSaveData;
                         calidSaveData.distortionCoefficients = (double[][]) calibData.distCoeffs.GetMangedObject();
@@ -98,7 +102,6 @@ public class CalibrateCameraSample : MonoBehaviour
                         notCalibrated = false;
                     }
                 }
-                    
             } 
         }
     }

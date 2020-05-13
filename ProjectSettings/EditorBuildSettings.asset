@@ -11,7 +11,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/CallNativeCode.unity
     guid: f1b2624f0eb80f548b64c2287ddba3e5
-  - enabled: 1
-    path: Assets/WebCamTest.unity
+  - enabled: 0
+    path: Assets/Demos/PoseEstimationDemo.unity
     guid: ecb08c50b863e154ba97311e16dfc535
+  - enabled: 0
+    path: Assets/Demos/AndroidDetectMarkersDemo.unity
+    guid: c7cca359b7c50bd4fa302ecba6690db2
+  - enabled: 1
+    path: Assets/Demos/AndroidCameraCalibrationAndPoseEstimationDemo.unity
+    guid: 0333b62d5dcef3e4286e70924864d942
   m_configObjects: {}
