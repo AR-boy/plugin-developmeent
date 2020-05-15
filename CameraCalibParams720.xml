@@ -61,4 +61,7 @@
       <double>1</double>
     </ArrayOfDouble>
   </cameraMatrix>
+  <reProjectionError>
+    <double>1</double>
+  </reProjectionError>
 </CameraCalibSerializable>

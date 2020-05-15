@@ -205,21 +205,9 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1383120357}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b282b4205720f47bde91d5d3cef0c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1383120359
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1383120357}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75f2409517ecc204aa349b2619603d29, type: 3}
+  m_Script: {fileID: 11500000, guid: d0b282b4205720f47bde91d5d3cef0c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1502378477
@@ -447,12 +435,12 @@ PrefabInstance:
     - target: {fileID: 4656592424722013427, guid: a4302a3b7bd4043459b96434a1c4d713,
         type: 3}
       propertyPath: desiredResolution.x
-      value: 1280
+      value: 1920
       objectReference: {fileID: 0}
     - target: {fileID: 4656592424722013427, guid: a4302a3b7bd4043459b96434a1c4d713,
         type: 3}
       propertyPath: desiredResolution.y
-      value: 720
+      value: 1080
       objectReference: {fileID: 0}
     - target: {fileID: 4656592424722013429, guid: a4302a3b7bd4043459b96434a1c4d713,
         type: 3}
@@ -521,17 +509,17 @@ PrefabInstance:
     - target: {fileID: 4827735387479629396, guid: 698cc40f914d9ae418aab4fe40ebadb8,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -139.1
+      value: -296
       objectReference: {fileID: 0}
     - target: {fileID: 4827735387479629396, guid: 698cc40f914d9ae418aab4fe40ebadb8,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -58
+      value: -46
       objectReference: {fileID: 0}
     - target: {fileID: 4827735387479629396, guid: 698cc40f914d9ae418aab4fe40ebadb8,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 203.6
+      value: 131
       objectReference: {fileID: 0}
     - target: {fileID: 4827735387479629396, guid: 698cc40f914d9ae418aab4fe40ebadb8,
         type: 3}
@@ -572,6 +560,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4827735387479629396, guid: 698cc40f914d9ae418aab4fe40ebadb8,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 4827735387479629397, guid: 698cc40f914d9ae418aab4fe40ebadb8,
         type: 3}

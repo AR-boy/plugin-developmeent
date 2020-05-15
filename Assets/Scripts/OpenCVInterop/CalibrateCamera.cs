@@ -14,10 +14,12 @@ namespace OpenCVInterop
     {
         public MatDoubleMarshaller cameraMatrix;
         public MatDoubleMarshaller distCoeffs;
-        public UCameraCalibrationData(MatDoubleMarshaller distCoeffs, MatDoubleMarshaller cameraMatrix)
+        public double reProjectionError;
+        public UCameraCalibrationData(MatDoubleMarshaller distCoeffs, MatDoubleMarshaller cameraMatrix, double reProjectionError)
         {
             this.distCoeffs = distCoeffs;
             this.cameraMatrix = cameraMatrix;
+            this.reProjectionError = reProjectionError;
         }
     }
     public static partial class Aruco
@@ -47,7 +49,7 @@ namespace OpenCVInterop
                 IntPtr allCharucoCorners
             );
             [DllImport("OpenCVUnity")]
-            public unsafe static extern void CalibrateCameraCharuco(
+            public unsafe static extern double CalibrateCameraCharuco(
                 int height,
                 int width,
                 int squaresW,
@@ -72,21 +74,6 @@ namespace OpenCVInterop
                 IntPtr cameraMatrix,
                 IntPtr distortionCoefficients,
                 bool isSevenTwenty
-            );
-            [DllImport("OpenCVUnity")]
-            public static extern void RotationVectorToEulerAngles(
-                IntPtr rvecs,
-                IntPtr eulerAngles
-            );
-            [DllImport("OpenCVUnity")]
-            public static extern void RotationVectorToEulerAnglesV2(
-                IntPtr rvecs,
-                IntPtr eulerAngles
-            );
-            [DllImport("OpenCVUnity")]
-            public static extern void RotationVectorsToEulerAngles(
-                IntPtr rvecs,
-                IntPtr eulerAngles
             );
             [DllImport("OpenCVUnity")]
             public unsafe static extern IntPtr CreateBooleanPointer();
@@ -118,7 +105,7 @@ namespace OpenCVInterop
                 IntPtr allCharucoCorners
             );
             [DllImport("OpenCVUnity")]
-            public unsafe static extern void CalibrateCameraCharuco(
+            public unsafe static extern double CalibrateCameraCharuco(
                 int height,
                 int width,
                 int squaresW,
@@ -143,21 +130,6 @@ namespace OpenCVInterop
                 IntPtr cameraMatrix,
                 IntPtr distortionCoefficients,
                 bool isSevenTwenty
-            );
-            [DllImport("OpenCVUnity")]
-            public static extern void RotationVectorToEulerAngles(
-                IntPtr rvecs,
-                IntPtr eulerAngles
-            );
-            [DllImport("OpenCVUnity")]
-            public static extern void RotationVectorToEulerAnglesV2(
-                IntPtr rvecs,
-                IntPtr eulerAngles
-            );
-            [DllImport("OpenCVUnity")]
-            public static extern void RotationVectorsToEulerAngles(
-                IntPtr rvecs,
-                IntPtr eulerAngles
             );
             [DllImport("OpenCVUnity")]
             public unsafe static extern IntPtr CreateBooleanPointer();
@@ -189,7 +161,7 @@ namespace OpenCVInterop
                 IntPtr allCharucoCorners
             );
             [DllImport("OpenCVUnity")]
-            public unsafe static extern void CalibrateCameraCharuco(
+            public unsafe static extern double CalibrateCameraCharuco(
                 int height,
                 int width,
                 int squaresW,
@@ -214,21 +186,6 @@ namespace OpenCVInterop
                 IntPtr cameraMatrix,
                 IntPtr distortionCoefficients,
                 bool isSevenTwenty
-            );
-            [DllImport("OpenCVUnity")]
-            public static extern void RotationVectorToEulerAngles(
-                IntPtr rvecs,
-                IntPtr eulerAngles
-            );
-            [DllImport("OpenCVUnity")]
-            public static extern void RotationVectorToEulerAnglesV2(
-                IntPtr rvecs,
-                IntPtr eulerAngles
-            );
-            [DllImport("OpenCVUnity")]
-            public static extern void RotationVectorsToEulerAngles(
-                IntPtr rvecs,
-                IntPtr eulerAngles
             );
             [DllImport("OpenCVUnity")]
             public unsafe static extern IntPtr CreateBooleanPointer();
@@ -321,99 +278,70 @@ namespace OpenCVInterop
 
             return foundBoard;
         }  
-        public static UCameraCalibrationData UStaticCalibrateCameraData() 
-        {   
+        // public static UCameraCalibrationData UStaticCalibrateCameraData() 
+        // {   
             
-            MatDoubleMarshaller distCoeffs = new MatDoubleMarshaller();
-            MatDoubleMarshaller cameraMatrix = new MatDoubleMarshaller();
+        //     MatDoubleMarshaller distCoeffs = new MatDoubleMarshaller();
+        //     MatDoubleMarshaller cameraMatrix = new MatDoubleMarshaller();
 
-            StaticCameraCalibData(
-                cameraMatrix.NativeDataPointer,
-                distCoeffs.NativeDataPointer,
-                true
-            );
+        //     StaticCameraCalibData(
+        //         cameraMatrix.NativeDataPointer,
+        //         distCoeffs.NativeDataPointer,
+        //         true
+        //     );
 
-            UCameraCalibrationData calibrationData = new UCameraCalibrationData(
-                distCoeffs,
-                cameraMatrix
-            );
+        //     UCameraCalibrationData calibrationData = new UCameraCalibrationData(
+        //         distCoeffs,
+        //         cameraMatrix
+        //     );
             
-            return calibrationData;
-        }
-        public static double[][] UGetEulerAngles(IntPtr rvec)
-        {
+        //     return calibrationData;
+        // }
+    
+        // unsafe public static UCameraCalibrationData UCalibrateCamera(Color32[] texture, int width, int height, DoubleVectorIntMarshaller allCharucoIds, DoubleVectorPoint2FMarshaller allCharucoCorners) 
+        // {   
 
-            MatDoubleMarshaller eulerAngles = new MatDoubleMarshaller();
-            RotationVectorToEulerAnglesV2(
-                rvec,
-                eulerAngles.NativeDataPointer
-            );
+        //     var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            double[][] eulerAngleValues = (double[][]) eulerAngles.GetMangedObject();
+        //     // IntPtr distCoeffs = OpenCVMarshal.CreateMatPointer();
+        //     MatDoubleMarshaller distCoeffs = new MatDoubleMarshaller();
+        //     // IntPtr cameraMatrix = OpenCVMarshal.CreateMatPointer();
+        //     MatDoubleMarshaller cameraMatrix = new MatDoubleMarshaller();
 
-            return eulerAngleValues;
-        }
-        // rename needed
-        public static double[][] UGetEulerAnglesMultiple(IntPtr rvecs)
-        {
-            MatDoubleMarshaller matDoubleMarshaller = new MatDoubleMarshaller();
-            RotationVectorsToEulerAngles(
-                rvecs,
-                matDoubleMarshaller.NativeDataPointer
-            );
-
-            double[][] eulerAngles = (double[][]) matDoubleMarshaller.GetMangedObject();
-
-            return eulerAngles;
-        }
-        unsafe public static UCameraCalibrationData UCalibrateCamera(Color32[] texture, int width, int height, DoubleVectorIntMarshaller allCharucoIds, DoubleVectorPoint2FMarshaller allCharucoCorners) 
-        {   
-
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-
-            // IntPtr distCoeffs = OpenCVMarshal.CreateMatPointer();
-            MatDoubleMarshaller distCoeffs = new MatDoubleMarshaller();
-            // IntPtr cameraMatrix = OpenCVMarshal.CreateMatPointer();
-            MatDoubleMarshaller cameraMatrix = new MatDoubleMarshaller();
-
-            fixed (Color32* texP = texture)
-            {
-                CalibrateCamera(
-                    texP,
-                    width,
-                    height,
-                    allCharucoIds.NativeDataPointer,
-                    allCharucoCorners.NativeDataPointer,
-                    cameraMatrix.NativeDataPointer,
-                    distCoeffs.NativeDataPointer
-                );
-            }
+        //     fixed (Color32* texP = texture)
+        //     {
+        //         CalibrateCamera(
+        //             texP,
+        //             width,
+        //             height,
+        //             allCharucoIds.NativeDataPointer,
+        //             allCharucoCorners.NativeDataPointer,
+        //             cameraMatrix.NativeDataPointer,
+        //             distCoeffs.NativeDataPointer
+        //         );
+        //     }
 
 
-            UCameraCalibrationData calibrationData = new UCameraCalibrationData(
-                distCoeffs,
-                cameraMatrix
-            );
+        //     UCameraCalibrationData calibrationData = new UCameraCalibrationData(
+        //         distCoeffs,
+        //         cameraMatrix
+        //     );
 
-            watch.Stop();
-            var elapsedMs = watch.ElapsedMilliseconds;
+        //     watch.Stop();
+        //     var elapsedMs = watch.ElapsedMilliseconds;
             
-            return calibrationData;
-        }
+        //     return calibrationData;
+        // }
         unsafe public static UCameraCalibrationData UCalibrateCameraCharuco(int width, int height, CharucoBoardParameters boardParameters, DoubleVectorIntMarshaller allCharucoIds, DoubleVectorPoint2FMarshaller allCharucoCorners) 
         {   
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            int cornersH = 9;
-            int cornersW = 6;
-            float squareLength = 0.025f;
-            float markersLength = 0.0125f;
             // IntPtr distCoeffs = OpenCVMarshal.CreateMatPointer();
             MatDoubleMarshaller distCoeffs = new MatDoubleMarshaller();
             // IntPtr cameraMatrix = OpenCVMarshal.CreateMatPointer();
             MatDoubleMarshaller cameraMatrix = new MatDoubleMarshaller();
 
-            CalibrateCameraCharuco(
+            double reProjectionError = CalibrateCameraCharuco(
                 height,
                 width,
                 boardParameters.squaresW,
@@ -429,7 +357,8 @@ namespace OpenCVInterop
 
             UCameraCalibrationData calibrationData = new UCameraCalibrationData(
                 distCoeffs,
-                cameraMatrix
+                cameraMatrix,
+                reProjectionError
             );
 
             watch.Stop();

@@ -55,6 +55,7 @@ public class AndroidCalibrateCameraAndEstimatePoseSample : MonoBehaviour {
                     CameraCalibSerializable calidSaveData;
                     calidSaveData.distortionCoefficients = (double[][]) calibData.distCoeffs.GetMangedObject();
                     calidSaveData.cameraMatrix = (double[][]) calibData.cameraMatrix.GetMangedObject();
+                    calidSaveData.reProjectionError = calibData.reProjectionError;
                     Utilities.SaveCameraCalibrationParams(calidSaveData);
 
                     notCalibrated = false;

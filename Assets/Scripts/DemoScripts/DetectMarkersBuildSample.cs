@@ -6,7 +6,7 @@ using UnityEngine;
 
 using OpenCVInterop;
 using OpenCVInterop.Utilities;
-public class DetectMarkersSampleAndroidSample : MonoBehaviour
+public class DetectMarkersBuildSample : MonoBehaviour
 {    
     private WebCamTexture _webCamTexture;
     private List<Transform> _markerDispalyers;

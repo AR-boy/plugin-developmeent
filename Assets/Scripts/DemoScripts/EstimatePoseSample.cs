@@ -51,11 +51,11 @@ public class EstimatePoseSample : MonoBehaviour
 
         if(notCalibrated && Input.GetKeyDown(KeyCode.Space))
         {
-            calibData = Aruco.UStaticCalibrateCameraData();
             CameraCalibSerializable calidSaveData = Utilities.LoadCameraCalibrationParams();
             MatDoubleMarshaller distCoeffs = new MatDoubleMarshaller(calidSaveData.distortionCoefficients);
             MatDoubleMarshaller cameraMatrix = new MatDoubleMarshaller(calidSaveData.cameraMatrix);
-            calibData =  new UCameraCalibrationData(distCoeffs, cameraMatrix);
+            double reProjectionError = calidSaveData.reProjectionError;
+            calibData = new UCameraCalibrationData(distCoeffs, cameraMatrix, reProjectionError);
             notCalibrated = false;
         }
         else if(!notCalibrated)

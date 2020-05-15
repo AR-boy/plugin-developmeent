@@ -26,17 +26,17 @@ public class DetectMarkersSample : MonoBehaviour
                 Vector3 endVector;
                 if(j> 0 && j % (markers[i].Count - 1) == 0)
                 {
-                    startVector = new Vector3(-markers[i][j].x, -markers[i][j].y, 10f);
-                    endVector = new Vector3(-markers[i][0].x, -markers[i][0].y, 10f);
+                    startVector = new Vector3(-markers[i][j].x, -markers[i][j].y, 1);
+                    endVector = new Vector3(-markers[i][0].x, -markers[i][0].y, 1);
 
-                    Debug.DrawLine(startVector, endVector, Color.green, 0.05f);
+                    Debug.DrawLine(startVector, endVector, Color.green);
                 }
                 else
                 {
-                    startVector = new Vector3(-markers[i][j].x, -markers[i][j].y, 10f);
-                    endVector = new Vector3(-markers[i][j+1].x, -markers[i][j+1].y, 10f);
+                    startVector = new Vector3(-markers[i][j].x, -markers[i][j].y, 1);
+                    endVector = new Vector3(-markers[i][j+1].x, -markers[i][j+1].y, 1);
 
-                    Debug.DrawLine(startVector, endVector, Color.red, 0.05f);
+                    Debug.DrawLine(startVector, endVector, Color.red);
                 }
                 
             }

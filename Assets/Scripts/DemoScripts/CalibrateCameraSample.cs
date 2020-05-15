@@ -71,6 +71,7 @@ public class CalibrateCameraSample : MonoBehaviour
                     CameraCalibSerializable calidSaveData;
                     calidSaveData.distortionCoefficients = (double[][]) calibData.distCoeffs.GetMangedObject();
                     calidSaveData.cameraMatrix = (double[][]) calibData.cameraMatrix.GetMangedObject();
+                    calidSaveData.reProjectionError = calibData.reProjectionError;
                     Utilities.SaveCameraCalibrationParams(calidSaveData);
 
                     notCalibrated = false;
@@ -97,6 +98,7 @@ public class CalibrateCameraSample : MonoBehaviour
                         CameraCalibSerializable calidSaveData;
                         calidSaveData.distortionCoefficients = (double[][]) calibData.distCoeffs.GetMangedObject();
                         calidSaveData.cameraMatrix = (double[][]) calibData.cameraMatrix.GetMangedObject();
+                        calidSaveData.reProjectionError = calibData.reProjectionError;
                         Utilities.SaveCameraCalibrationParams(calidSaveData);
 
                         notCalibrated = false;

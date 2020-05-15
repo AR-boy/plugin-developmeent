@@ -16,9 +16,11 @@ namespace OpenCVInterop.Utilities
     public struct CameraCalibSerializable {
         public double[][] distortionCoefficients;
         public double[][] cameraMatrix;
-        public CameraCalibSerializable(double[][] distortionCoefficientsParam, double[][] cameraMatrixParam) {
-            distortionCoefficients = distortionCoefficientsParam;
-            cameraMatrix = cameraMatrixParam;
+        public double reProjectionError;
+        public CameraCalibSerializable(double[][] distortionCoefficients, double[][] cameraMatrix, double reProjectionError) {
+            this.distortionCoefficients = distortionCoefficients;
+            this.cameraMatrix = cameraMatrix;
+            this.reProjectionError = reProjectionError;
         }
     }
     public struct CharucoBoardParameters {
@@ -54,9 +56,9 @@ namespace OpenCVInterop.Utilities
     {
         private static string CAMERA_CALIBRATION_FILE = "CameraCalibParams.xml";
         public static void SaveCameraCalibrationParams(CameraCalibSerializable cameraCalibData) {
-           if(File.Exists(CAMERA_CALIBRATION_FILE))
+           if(File.Exists(Path.Combine(Application.persistentDataPath, CAMERA_CALIBRATION_FILE)))
             {
-                File.Delete(CAMERA_CALIBRATION_FILE);
+                File.Delete(Path.Combine(Application.persistentDataPath, CAMERA_CALIBRATION_FILE));
             }
             XmlDocument xmlDoc = new XmlDocument();
             XmlSerializer serialiser = new XmlSerializer(typeof(CameraCalibSerializable));
@@ -68,7 +70,6 @@ namespace OpenCVInterop.Utilities
                 xmlDoc.Save(Path.Combine(Application.persistentDataPath, CAMERA_CALIBRATION_FILE));
             }
             CameraCalibSerializable calibData =  LoadCameraCalibrationParams();
-            string shit = "shit";
         }
         public static CameraCalibSerializable LoadCameraCalibrationParams() {
             XmlDocument xmlDoc = new XmlDocument();

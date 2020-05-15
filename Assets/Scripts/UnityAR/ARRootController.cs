@@ -11,7 +11,7 @@ public class ARRootController : MonoBehaviour
 
     private Renderer[] childrenMeshes;
     private ARCameraController ARCamera;
-    private Collider ARRootCollider;
+    private BoxCollider ARRootCollider;
     private BoundingBox childrenBounds;
 
     void Start()
@@ -21,7 +21,7 @@ public class ARRootController : MonoBehaviour
         {
             Debug.LogError("No ARCamera found, bring ARCamera prefab into the scene");
         }
-        ARRootCollider = gameObject.GetComponent<Collider>();
+        ARRootCollider = gameObject.GetComponent<BoxCollider>();
         childrenMeshes = gameObject.GetComponentsInChildren<Renderer>();
         childrenBounds = new BoundingBox();
 
@@ -52,6 +52,8 @@ public class ARRootController : MonoBehaviour
 
         bbox.max_z = childrenMeshes[0].bounds.max.z;
         bbox.min_z = childrenMeshes[0].bounds.min.z;
+
+
         // get the bounds of all the renderers inside ARRoot, and record min/max values
         foreach(Renderer renderer in childrenMeshes)
         {
@@ -80,24 +82,55 @@ public class ARRootController : MonoBehaviour
                 bbox.max_z = renderer.bounds.max.z;
             }
         }
+
+        // Debug.Log("max: "+ bbox.max_x + "  "+bbox.max_y  + " "+ bbox.max_z);
+        // Debug.Log("min: "+ bbox.min_x + "  "+bbox.min_y  + " "+ bbox.min_z);
+
         return bbox;
     }
     void Update()
     {
-        childrenBounds = new BoundingBox();
+        // childrenBounds = CalculateBoundinBox();
 
-        ARRootCollider.bounds.SetMinMax(
-            new Vector3(
-                childrenBounds.min_x,
-                childrenBounds.min_y,
-                childrenBounds.min_z
-            ), 
-            new Vector3(
-                childrenBounds.max_x, 
-                childrenBounds.max_y, 
-                childrenBounds.max_z
-            )
-        );
+        // ARRootCollider.bounds.center = new Vector3(
+        //     (childrenBounds.max_x + childrenBounds.min_x) / 2,
+        //     (childrenBounds.max_y + childrenBounds.min_y) / 2,
+        //     (childrenBounds.max_z + childrenBounds.min_z) / 2
+        // );
+        // Bounds bounds = new Bounds();
+        // bounds.SetMinMax(
+        //     new Vector3(
+        //         childrenBounds.min_x - childrenBounds.max_x,
+        //         childrenBounds.min_y - childrenBounds.max_y,
+        //         childrenBounds.min_z - childrenBounds.max_z
+        //     ), 
+        //     new Vector3(
+        //         childrenBounds.max_x - childrenBounds.min_x, 
+        //         childrenBounds.max_y -  childrenBounds.min_y, 
+        //         childrenBounds.max_z - childrenBounds.min_z
+        //     )
+        // );
+        // Debug.Log(bounds.size);
+        // ARRootCollider.center = bounds.center;
+        // ARRootCollider.size =  new Vector3(
+        //     (childrenBounds.max_x - childrenBounds.min_x) / 2,
+        //     (childrenBounds.max_y - childrenBounds.min_y) / 2,
+        //     (childrenBounds.max_z - childrenBounds.min_z) / 2
+        // );
+
+        // ARRootCollider.bounds.SetMinMax(
+        //     new Vector3(
+        //         childrenBounds.min_x - childrenBounds.max_x,
+        //         childrenBounds.min_y - childrenBounds.max_y,
+        //         childrenBounds.min_z - childrenBounds.max_z
+        //     ), 
+        //     new Vector3(
+        //         childrenBounds.max_x - childrenBounds.min_x, 
+        //         childrenBounds.max_y -  childrenBounds.min_y, 
+        //         childrenBounds.max_z - childrenBounds.min_z
+        //     )
+        // );
+        // Debug.Log("bounds: "+ ARRootCollider.bounds);
     }
     void OnTriggerEnter(Collider other)
     {
