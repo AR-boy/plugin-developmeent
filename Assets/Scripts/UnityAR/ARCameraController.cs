@@ -11,12 +11,7 @@ public class ARCameraController : MonoBehaviour
     Vector2 displayPaneSize;
     private bool lateStart = true;
     // Start is called before the first frame update
-    void Start()
-    {
-      
-    }
 
-    // Update is called once per frame
     void Update()
     {
         if(lateStart)

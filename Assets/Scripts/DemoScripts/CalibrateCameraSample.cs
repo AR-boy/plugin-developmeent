@@ -15,7 +15,6 @@ public class CalibrateCameraSample : MonoBehaviour
     private DoubleVectorPoint2FMarshaller allCharucoCorners;
     private DoubleVectorIntMarshaller allCharucoIds;
     private UCameraCalibrationData calibData;
-    private USingleMarkerPoseEstimationData poseEstimationData;
     private int numOfSuccessfulFrames;
     private bool notCalibrated = true;
     private bool staticCalib = true;

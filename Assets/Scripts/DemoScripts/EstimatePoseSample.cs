@@ -15,7 +15,6 @@ public class EstimatePoseSample : MonoBehaviour
     private WebCamTexture _webCamTexture;
     private Transform _ARRootTransform;
     private UCameraCalibrationData calibData;
-    private USingleMarkerPoseEstimationData poseEstimationData;
     private float originalScale = 100;
     private bool notCalibrated = true;
     private static CharucoBoardParameters boardParameters = new CharucoBoardParameters(
