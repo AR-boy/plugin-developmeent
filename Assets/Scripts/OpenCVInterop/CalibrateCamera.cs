@@ -125,6 +125,7 @@ namespace OpenCVInterop
         #endif
 
 
+        // find charuco board corners in frame with given board parameters and imbues marshaller objects with information found 
         unsafe public static bool UFindCharucoBoardCorners(Color32[] texture, int width, int height, CharucoBoardParameters boardParameters, DoubleVectorIntMarshaller allCharucoIds, DoubleVectorPoint2FMarshaller allCharucoCorners)
         {
 
@@ -156,6 +157,7 @@ namespace OpenCVInterop
 
             return foundBoard;
         } 
+        // find calibrates camera with collected data found by UFindCharucoBoardCorners method
         unsafe public static UCameraCalibrationData UCalibrateCameraCharuco(int width, int height, CharucoBoardParameters boardParameters, DoubleVectorIntMarshaller allCharucoIds, DoubleVectorPoint2FMarshaller allCharucoCorners) 
         {   
             MatDoubleMarshaller distCoeffs = new MatDoubleMarshaller();

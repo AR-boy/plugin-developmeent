@@ -26,6 +26,7 @@ public class DetectMarkersBuildSample : MonoBehaviour
 
     void DrawMarkers(int[] markersIds, List<List<Vector2>> markers, List<List<Vector2>> rejectedCandidates)
     {
+        // draw 3D objects at detected marker posiotns
         for(int i = 0; i < markersIds.Length; i++)
         {
             _markerDispalyers[i].position = new Vector3(-markers[i][0].x, -markers[i][0].y, 10);

@@ -54,6 +54,8 @@ namespace OpenCVInterop
             );
         #endif
 
+
+        // detects Aruco markers in the frame
         unsafe public static UDetectMarkersData UDetectMarkers(Color32[] texture, int width, int height) 
         {   
             var watch = System.Diagnostics.Stopwatch.StartNew();

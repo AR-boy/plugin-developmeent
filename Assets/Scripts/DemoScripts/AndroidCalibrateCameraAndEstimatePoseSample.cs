@@ -20,6 +20,7 @@ public class AndroidCalibrateCameraAndEstimatePoseSample : MonoBehaviour {
     private float originalScale = 100;
     private float numOfFrames = 40;
 
+    // defined board information for real life specification of the board generated with GenerateCharucoBoard script
     private static CharucoBoardParameters boardParameters = new CharucoBoardParameters(
         3, //squaresH 
         4, //squaresW
@@ -40,6 +41,7 @@ public class AndroidCalibrateCameraAndEstimatePoseSample : MonoBehaviour {
         {
             if (Input.touchCount > 0)
             {
+                // find charuco board corners in the frame
                 bool sucess = Aruco.UFindCharucoBoardCorners(_webCamTexture.GetPixels32(), _webCamTexture.width, _webCamTexture.height, boardParameters, allCharucoIds, allCharucoCorners);
 
                 if(sucess)
@@ -49,12 +51,14 @@ public class AndroidCalibrateCameraAndEstimatePoseSample : MonoBehaviour {
 
                 if(numOfSuccessfulFrames >= 40)
                 {
+                    // calibrate camera after defined amount of frames have been recorded
                     calibData = Aruco.UCalibrateCameraCharuco(_webCamTexture.width, _webCamTexture.height, boardParameters, allCharucoIds, allCharucoCorners);
 
                     CameraCalibSerializable calidSaveData;
                     calidSaveData.distortionCoefficients = (double[][]) calibData.distCoeffs.GetMangedObject();
                     calidSaveData.cameraMatrix = (double[][]) calibData.cameraMatrix.GetMangedObject();
                     calidSaveData.reProjectionError = calibData.reProjectionError;
+                    // save obtained calibration settings
                     Utilities.SaveCameraCalibrationParams(calidSaveData);
 
                     notCalibrated = false;
@@ -83,8 +87,10 @@ public class AndroidCalibrateCameraAndEstimatePoseSample : MonoBehaviour {
         double[][] eulerAngles = framePose.eulerAngles;
         Vec3d tvec = framePose.tvec;
 
+        // get 3D object's scale
         float scale = Utilities.CalculateScale(tvec, boardParameters.markerLength, originalScale);
 
+         // if more than 2 markers found transform based on average position and euler angle rotation
         if(frameMarkers.markerIds.Length > 2)
         {
             _ARRootTransform.position = Utilities.CalculateBoardAveragePosition(_ARRootTransform.position, frameMarkers.markers);

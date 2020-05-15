@@ -17,6 +17,8 @@ public class EstimatePoseSample : MonoBehaviour
     private UCameraCalibrationData calibData;
     private float originalScale = 100;
     private bool notCalibrated = true;
+
+    // defined board information for real life specification of the board generated with GenerateCharucoBoard script
     private static CharucoBoardParameters boardParameters = new CharucoBoardParameters(
         3, //squaresH 
         4, //squaresW
@@ -29,13 +31,14 @@ public class EstimatePoseSample : MonoBehaviour
         _ARRootTransform = GameObject.FindWithTag("ARRoot").transform;
         _webCamTexture = GetComponentInParent<InitWebCamera>().GetCamera();
     }
+    // transform game object
     void TransformGameObjects(UBoardMarkerPoseEstimationDataEuler framePose, UDetectMarkersData frameMarkers)
     {
         double[][] eulerAngles = framePose.eulerAngles;
         Vec3d tvec = framePose.tvec;
-
+        // get 3D object's scale
         float scale = Utilities.CalculateScale(tvec, boardParameters.markerLength, originalScale);
-
+        // if more than 2 markers found transform based on average position and euler angle rotation
         if(frameMarkers.markerIds.Length > 2)
         {
             _ARRootTransform.position = Utilities.CalculateBoardAveragePosition(_ARRootTransform.position, frameMarkers.markers);
@@ -48,17 +51,22 @@ public class EstimatePoseSample : MonoBehaviour
     void Update()
     {
 
+        // if space is down do AR tranformation
         if(notCalibrated && Input.GetKeyDown(KeyCode.Space))
         {
+            // laod camera calibrations setting
             CameraCalibSerializable calidSaveData = Utilities.LoadCameraCalibrationParams();
+            // initialise marhsallers
             MatDoubleMarshaller distCoeffs = new MatDoubleMarshaller(calidSaveData.distortionCoefficients);
             MatDoubleMarshaller cameraMatrix = new MatDoubleMarshaller(calidSaveData.cameraMatrix);
             double reProjectionError = calidSaveData.reProjectionError;
+            // get calibration data
             calibData = new UCameraCalibrationData(distCoeffs, cameraMatrix, reProjectionError);
             notCalibrated = false;
         }
         else if(!notCalibrated)
         {
+            // estimate charuco board pose
             (
                 UDetectMarkersData markerData, 
                 UBoardMarkerPoseEstimationDataEuler poseEstimationData

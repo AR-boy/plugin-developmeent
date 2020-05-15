@@ -24,9 +24,9 @@ namespace OpenCVInterop
     }
 
 
+
     public static partial class Aruco
     {
-        static ProfilerMarker estimateCharucoBoardPosePerfMarker = new ProfilerMarker("OpenCVIntrop.EstimateCharucoBoardPose");
 
         #if UNITY_EDITOR_WIN
 
@@ -93,6 +93,7 @@ namespace OpenCVInterop
             
         #endif
 
+        // returns marker detection data and board pose information with board orientation
         public unsafe static (UDetectMarkersData, UBoardMarkerPoseEstimationDataEuler) UEstimateCharucoBoardPose(Color32[] texture, int width, int height, CharucoBoardParameters boardParameters, IntPtr cameraMatrix, IntPtr distCoeffs)
         {
             // marshallers
@@ -104,7 +105,6 @@ namespace OpenCVInterop
             DoubleVectorPoint2FMarshaller markerCornerMarshaller = new DoubleVectorPoint2FMarshaller();
             DoubleVectorPoint2FMarshaller rejectedCandidateMarshaller = new DoubleVectorPoint2FMarshaller();
 
-            estimateCharucoBoardPosePerfMarker.Begin();    
             fixed (Color32* texP = texture)
             {
                 EstimateCharucoBoardPose(
@@ -125,7 +125,6 @@ namespace OpenCVInterop
                     eulerAngles.NativeDataPointer
                 );
             }
-            estimateCharucoBoardPosePerfMarker.End();   
 
             UDetectMarkersData markerData = new UDetectMarkersData(
                 (int[]) markerIds.GetMangedObject(),

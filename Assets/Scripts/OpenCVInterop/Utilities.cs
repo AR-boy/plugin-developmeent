@@ -88,6 +88,7 @@ namespace OpenCVInterop.Utilities
             return calibData;
         }
 
+        // calculate scale
         public static float CalculateScale(Vec3d tvec, float markerLength, float originalScale)
         {
             float scale = originalScale;
@@ -98,6 +99,7 @@ namespace OpenCVInterop.Utilities
             }
             return scale;
         }
+        // convert Euler angles
         public static Quaternion CalculateEulerAngleRotation(double[][] eulerAngles, Quaternion originalRotation)
         {
         
@@ -124,6 +126,7 @@ namespace OpenCVInterop.Utilities
             return newRotation;
         }
 
+        // calculate average position
         public static Vector3 CalculateBoardAveragePosition(Vector3 currentPosition, List<List<Vector2>> markers)
         {
             float sum_x = 0;

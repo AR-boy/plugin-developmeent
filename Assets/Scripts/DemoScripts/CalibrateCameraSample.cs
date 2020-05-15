@@ -21,7 +21,7 @@ public class CalibrateCameraSample : MonoBehaviour
     private bool scaleGotten = false;
     private float numOfFrames;
     private bool runningOnAndroid;
-
+    // defined board information for real life specification of the board generated with GenerateCharucoBoard script
     private static CharucoBoardParameters boardParameters = new CharucoBoardParameters(
         3, //squaresH 
         4, //squaresW
@@ -56,6 +56,7 @@ public class CalibrateCameraSample : MonoBehaviour
         {
             if(notCalibrated && Input.GetKeyDown(KeyCode.Space))
             {
+                // find charuco board corners in the frame
                 bool sucess = Aruco.UFindCharucoBoardCorners(_webCamTexture.GetPixels32(), _webCamTexture.width, _webCamTexture.height, boardParameters, allCharucoIds, allCharucoCorners);
 
                 if(sucess)
@@ -65,12 +66,14 @@ public class CalibrateCameraSample : MonoBehaviour
 
                 if(numOfSuccessfulFrames >= numOfFrames)
                 {
+                    // calibrate camera after defined amount of frames have been recorded
                     calibData = Aruco.UCalibrateCameraCharuco(_webCamTexture.width, _webCamTexture.height, boardParameters, allCharucoIds, allCharucoCorners);
 
                     CameraCalibSerializable calidSaveData;
                     calidSaveData.distortionCoefficients = (double[][]) calibData.distCoeffs.GetMangedObject();
                     calidSaveData.cameraMatrix = (double[][]) calibData.cameraMatrix.GetMangedObject();
                     calidSaveData.reProjectionError = calibData.reProjectionError;
+                    // save obtained calibration settings
                     Utilities.SaveCameraCalibrationParams(calidSaveData);
 
                     notCalibrated = false;
@@ -83,6 +86,7 @@ public class CalibrateCameraSample : MonoBehaviour
             {
                 if (Input.touchCount > 0)
                 {
+                    // find charuco board corners in the frame
                     bool sucess = Aruco.UFindCharucoBoardCorners(_webCamTexture.GetPixels32(), _webCamTexture.width, _webCamTexture.height, boardParameters, allCharucoIds, allCharucoCorners);
 
                     if(sucess)
@@ -92,12 +96,14 @@ public class CalibrateCameraSample : MonoBehaviour
 
                     if(numOfSuccessfulFrames >= numOfFrames)
                     {
+                        // calibrate camera after defined amount of frames have been recorded
                         calibData = Aruco.UCalibrateCameraCharuco(_webCamTexture.width, _webCamTexture.height, boardParameters, allCharucoIds, allCharucoCorners);
 
                         CameraCalibSerializable calidSaveData;
                         calidSaveData.distortionCoefficients = (double[][]) calibData.distCoeffs.GetMangedObject();
                         calidSaveData.cameraMatrix = (double[][]) calibData.cameraMatrix.GetMangedObject();
                         calidSaveData.reProjectionError = calibData.reProjectionError;
+                        // save obtained calibration settings
                         Utilities.SaveCameraCalibrationParams(calidSaveData);
 
                         notCalibrated = false;

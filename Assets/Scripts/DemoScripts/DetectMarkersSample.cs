@@ -18,6 +18,7 @@ public class DetectMarkersSample : MonoBehaviour
 
     void DrawMarkers(int[] markersIds, List<List<Vector2>> markers, List<List<Vector2>> rejectedCandidates)
     {
+        // draw line gizmo at detected marker posiotns
         for(int i = 0; i < markersIds.Length; i++)
         {
             for(int j = 0; j < markers[0].Count; j++)
@@ -46,6 +47,7 @@ public class DetectMarkersSample : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+            // detect markers in the frame with specified board parameters 
             UDetectMarkersData _markerData = Aruco.UDetectMarkers(_webCamTexture.GetPixels32(), _webCamTexture.width, _webCamTexture.height);
             if(_markerData.markerIds.Length > 0)
             {
